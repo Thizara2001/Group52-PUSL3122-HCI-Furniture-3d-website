@@ -14,9 +14,11 @@
     "@react-three/drei": "^10.0.7",
     "@react-three/fiber": "^9.1.2",
     "@tailwindcss/vite": "^4.1.4",
+    "@types/react-router-dom": "^5.3.3",
     "@types/three": "^0.175.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^7.5.3",
     "react-zoom-pan-pinch": "^3.7.0",
     "tailwindcss": "^4.1.4",
     "three": "^0.176.0"
