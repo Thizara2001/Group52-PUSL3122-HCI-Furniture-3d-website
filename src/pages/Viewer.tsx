@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
 import ThreeScene from "../ThreeScene";
 import { getFurnitureById } from "../data/furniture";
 import { Property } from "../models/furniture/furniture.ts";
 
 const Viewer: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const itemId = searchParams.get("item");
+  const location = useLocation();
+  const itemId: string | null = location.state?.id;
   const [view, setView] = useState<"2d" | "3d">("3d");
-  const [furniture] = useState(
-    itemId ? getFurnitureById(itemId) : undefined,
-  );
+  const [furniture] = useState(itemId ? getFurnitureById(itemId) : undefined);
   const [properties, setProperties] = useState<Property[]>([]);
 
   useEffect(() => {

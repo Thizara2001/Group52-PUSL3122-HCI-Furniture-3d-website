@@ -21,7 +21,8 @@ const Catalog: React.FC = () => {
               <div className="p-4">
                 <h2 className="text-xl font-semibold mb-2">{item.getName()}</h2>
                 <Link
-                  to={`/viewer?item=${item.getId()}`}
+                  to={`/viewer`}
+                  state={{id: item.getId()}}
                   className="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                 >
                   View in 3D
