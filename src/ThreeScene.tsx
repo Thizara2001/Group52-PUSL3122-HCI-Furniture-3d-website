@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { createRoom } from "./components/Room";
 import { setupControls } from "./components/Controls";
 import { Furniture } from "./models/furniture/furniture.ts";
+import { Room } from "./models/rooms/room.ts";
 
 interface ThreeSceneProps {
   view: "2d" | "3d";
   furniture?: Furniture;
+  room: Room;
 }
 
-const ThreeScene: React.FC<ThreeSceneProps> = ({ view, furniture }) => {
+const ThreeScene: React.FC<ThreeSceneProps> = ({ view, furniture, room }) => {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const [scene] = useState<THREE.Scene>(() => {
     const scene = new THREE.Scene();
@@ -44,7 +45,6 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ view, furniture }) => {
     return camera;
   });
   const [camera, setCamera] = useState<THREE.Camera>(perspectiveCamera);
-  const [room] = useState<THREE.Mesh>(() => createRoom());
 
   // Append renderer to the DOM
   useEffect(() => {
@@ -78,14 +78,14 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ view, furniture }) => {
   // Add objects to the scene
   useEffect(() => {
     // Room
-    scene.add(room);
+    scene.add(room.getModel());
 
     // Furniture
     if (furniture) scene.add(furniture.getModel());
 
     // Clean up
     return () => {
-      scene.remove(room);
+      scene.remove(room.getModel());
       if (furniture) scene.remove(furniture.getModel());
     };
   }, [furniture, room, scene]);
@@ -107,7 +107,7 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ view, furniture }) => {
         camera,
         scene,
         furniture ? [furniture.getModel()] : [],
-        room,
+        room.getModel(),
       );
     }
   }, [camera, furniture, renderer, room, scene, view]);
