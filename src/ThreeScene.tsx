@@ -161,7 +161,12 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ view, furniture }) => {
     };
   }, [camera, renderer, view]);
 
-  return <div ref={mountRef} className={"w-full h-full flex items-center justify-center"}/>;
+  return (
+    <div
+      ref={mountRef}
+      className={"w-full h-full flex items-center justify-center"}
+    />
+  );
 };
 
 export default ThreeScene;

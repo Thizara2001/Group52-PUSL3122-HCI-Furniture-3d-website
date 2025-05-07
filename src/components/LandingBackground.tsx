@@ -56,8 +56,10 @@ const LandingBackground: React.FC = () => {
         const x = item.position.x;
         const z = item.position.z;
 
-        item.position.x = x * Math.cos(rotationSpeed) - z * Math.sin(rotationSpeed);
-        item.position.z = z * Math.cos(rotationSpeed) + x * Math.sin(rotationSpeed);
+        item.position.x =
+          x * Math.cos(rotationSpeed) - z * Math.sin(rotationSpeed);
+        item.position.z =
+          z * Math.cos(rotationSpeed) + x * Math.sin(rotationSpeed);
 
         // Make furniture rotate on its own axis
         item.rotation.y += 0.01;

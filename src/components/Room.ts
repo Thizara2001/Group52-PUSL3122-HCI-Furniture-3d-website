@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
 export const createRoom = (): THREE.Mesh => {
   // Define room dimensions
@@ -17,7 +17,7 @@ export const createRoom = (): THREE.Mesh => {
 
   // Create the mesh
   const room = new THREE.Mesh(geometry, material);
-  room.name = 'Room';
+  room.name = "Room";
 
   return room;
 };

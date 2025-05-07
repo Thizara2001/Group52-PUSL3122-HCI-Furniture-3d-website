@@ -12,9 +12,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <Header />
       <div className="flex flex-1 overflow-hidden">
         <SideNav />
-        <main className="flex-1 overflow-hidden">
-          {children}
-        </main>
+        <main className="flex-1 overflow-hidden">{children}</main>
       </div>
     </div>
   );
