@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Property } from "../property.ts";
 
-export abstract class Furniture {
+export abstract class Room {
   protected readonly id: string;
   protected readonly name: string;
   protected readonly model: THREE.Mesh;

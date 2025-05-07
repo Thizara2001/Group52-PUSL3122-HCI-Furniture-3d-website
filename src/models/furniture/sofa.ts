@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import { Furniture, Property } from "./furniture.ts";
+import { Furniture } from "./furniture.ts";
+import { Property } from "../property.ts";
 
 export class Sofa extends Furniture {
   private geometry: THREE.BoxGeometry;

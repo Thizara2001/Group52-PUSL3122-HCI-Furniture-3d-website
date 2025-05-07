@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
 import ThreeScene from "../ThreeScene";
 import { getFurnitureById } from "../data/furniture";
-import { Property } from "../models/furniture/furniture.ts";
+import { Property } from "../models/property.ts";
 
 const Viewer: React.FC = () => {
   const location = useLocation();
