@@ -109,4 +109,37 @@ export class Sofa extends Furniture {
       },
     ];
   }
+
+  public static fromData(dump: SofaData): Sofa {
+    const sofa = new Sofa();
+    sofa.width = dump.width / 100;
+    sofa.depth = dump.depth / 100;
+    sofa.height = dump.height / 100;
+    sofa.color = parseInt(dump.color.toString(16), 16);
+    sofa.model.position.fromArray(dump.position);
+    sofa.refresh(0);
+    return sofa;
+  }
+
+  public dumpData(): SofaData {
+    return {
+      id: this.id,
+      name: this.name,
+      position: this.model.position.toArray(),
+      width: this.width,
+      depth: this.depth,
+      height: this.height,
+      color: this.color,
+    };
+  }
 }
+
+export type SofaData = {
+  id: string;
+  name: string;
+  position: number[];
+  width: number;
+  depth: number;
+  height: number;
+  color: number;
+};

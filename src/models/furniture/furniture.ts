@@ -27,4 +27,6 @@ export abstract class Furniture {
   public abstract getProperties(): Property[];
 
   public abstract refresh(floorY: number): void;
+
+  public abstract dumpData(): object;
 }
