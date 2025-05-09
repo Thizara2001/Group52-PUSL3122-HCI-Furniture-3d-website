@@ -3,24 +3,24 @@ import { Room } from "./room.ts";
 import { Property } from "../property.ts";
 
 export class LivingRoom extends Room {
-  private geometry: THREE.BoxGeometry;
-  private readonly wallsMaterial: THREE.MeshStandardMaterial;
-  private readonly floorMaterial: THREE.MeshStandardMaterial;
-  private readonly ceilingMaterial: THREE.MeshStandardMaterial;
+  private width = 20;
+  private height = 10;
+  private depth = 20;
+  private wallsColor = 0xdddddd;
+  private floorColor = 0xcccccc;
+  private ceilingColor = 0xeeeeee;
+  public readonly refresh: () => void;
 
   constructor() {
     const name = "Living Room";
-    const geometry = new THREE.BoxGeometry(20, 10, 20);
+
     const wallsMaterial = new THREE.MeshStandardMaterial({
-      color: 0xdddddd,
       side: THREE.BackSide,
     });
     const floorMaterial = new THREE.MeshStandardMaterial({
-      color: 0xcccccc,
       side: THREE.BackSide,
     });
     const ceilingMaterial = new THREE.MeshStandardMaterial({
-      color: 0xeeeeee,
       side: THREE.BackSide,
     });
 
@@ -33,15 +33,26 @@ export class LivingRoom extends Room {
       wallsMaterial, // back
     ];
 
-    const model = new THREE.Mesh(geometry, materials);
+    const model = new THREE.Mesh(new THREE.BoxGeometry(), materials);
     model.name = name;
 
     super("livingRoom", name, model);
 
-    this.geometry = geometry;
-    this.wallsMaterial = wallsMaterial;
-    this.floorMaterial = floorMaterial;
-    this.ceilingMaterial = ceilingMaterial;
+    this.refresh = () => {
+      model.geometry.dispose();
+
+      model.geometry = new THREE.BoxGeometry(
+        this.width,
+        this.height,
+        this.depth,
+      );
+
+      wallsMaterial.color.setHex(this.wallsColor);
+      floorMaterial.color.setHex(this.floorColor);
+      ceilingMaterial.color.setHex(this.ceilingColor);
+    };
+
+    this.refresh();
   }
 
   public getProperties(): Property[] {
@@ -49,40 +60,37 @@ export class LivingRoom extends Room {
       {
         name: "Walls Color",
         type: "color",
-        get: () => `#${this.wallsMaterial.color.getHexString()}`,
+        get: () => `#${this.wallsColor.toString(16)}`,
         set: (color: unknown) => {
           if (typeof color !== "string") {
             console.error("Invalid color value");
             return;
           }
-          const hexColor = parseInt(color.replace("#", "0x"), 16);
-          this.wallsMaterial.color.set(hexColor);
+          this.wallsColor = parseInt(color.replace("#", "0x"), 16);
         },
       },
       {
         name: "Floor Color",
         type: "color",
-        get: () => `#${this.floorMaterial.color.getHexString()}`,
+        get: () => `#${this.floorColor.toString(16)}`,
         set: (color: unknown) => {
           if (typeof color !== "string") {
             console.error("Invalid color value");
             return;
           }
-          const hexColor = parseInt(color.replace("#", "0x"), 16);
-          this.floorMaterial.color.set(hexColor);
+          this.floorColor = parseInt(color.replace("#", "0x"), 16);
         },
       },
       {
         name: "Ceiling Color",
         type: "color",
-        get: () => `#${this.ceilingMaterial.color.getHexString()}`,
+        get: () => `#${this.ceilingColor.toString(16)}`,
         set: (color: unknown) => {
           if (typeof color !== "string") {
             console.error("Invalid color value");
             return;
           }
-          const hexColor = parseInt(color.replace("#", "0x"), 16);
-          this.ceilingMaterial.color.set(hexColor);
+          this.ceilingColor = parseInt(color.replace("#", "0x"), 16);
         },
       },
       {
@@ -90,19 +98,13 @@ export class LivingRoom extends Room {
         type: "number",
         min: 10,
         max: 30,
-        get: () => this.geometry.parameters.width,
+        get: () => this.width,
         set: (width: unknown) => {
           if (typeof width !== "number") {
             console.error("Invalid width value");
             return;
           }
-          this.geometry.dispose();
-          this.geometry = new THREE.BoxGeometry(
-            width,
-            this.geometry.parameters.height,
-            this.geometry.parameters.depth,
-          );
-          this.model.geometry = this.geometry;
+          this.width = width;
         },
       },
       {
@@ -110,19 +112,13 @@ export class LivingRoom extends Room {
         type: "number",
         min: 5,
         max: 15,
-        get: () => this.geometry.parameters.height,
+        get: () => this.height,
         set: (height: unknown) => {
           if (typeof height !== "number") {
             console.error("Invalid height value");
             return;
           }
-          this.geometry.dispose();
-          this.geometry = new THREE.BoxGeometry(
-            this.geometry.parameters.width,
-            height,
-            this.geometry.parameters.depth,
-          );
-          this.model.geometry = this.geometry;
+          this.height = height;
         },
       },
       {
@@ -130,19 +126,13 @@ export class LivingRoom extends Room {
         type: "number",
         min: 10,
         max: 30,
-        get: () => this.geometry.parameters.depth,
+        get: () => this.depth,
         set: (depth: unknown) => {
           if (typeof depth !== "number") {
             console.error("Invalid depth value");
             return;
           }
-          this.geometry.dispose();
-          this.geometry = new THREE.BoxGeometry(
-            this.geometry.parameters.width,
-            this.geometry.parameters.height,
-            depth,
-          );
-          this.model.geometry = this.geometry;
+          this.depth = depth;
         },
       },
     ];

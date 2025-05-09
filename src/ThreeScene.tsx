@@ -95,10 +95,11 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ view, furniture, room }) => {
     const animate = () => {
       requestAnimationFrame(animate);
       furniture?.refresh();
+      room.refresh();
       renderer.render(scene, camera);
     };
     animate();
-  }, [camera, furniture, renderer, scene]);
+  }, [camera, furniture, renderer, room, scene]);
 
   // Setup Controls
   useEffect(() => {
