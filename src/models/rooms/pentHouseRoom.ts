@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { Room } from "./room.ts";
 import { Property } from "../property.ts";
 
-export class PentHouseRoom extends Room {
+export class PenthouseRoom extends Room {
   private width = 40;
   private height = 20;
   private depth = 20;
@@ -138,8 +138,8 @@ export class PentHouseRoom extends Room {
     return -this.height / 2;
   }
 
-  public static fromData(dump: PentHouseRoomData): PentHouseRoom {
-    const room = new PentHouseRoom();
+  public static fromData(dump: PenthouseRoomData): PenthouseRoom {
+    const room = new PenthouseRoom();
     room.width = dump.width;
     room.height = dump.height;
     room.depth = dump.depth;
@@ -151,7 +151,7 @@ export class PentHouseRoom extends Room {
     return room;
   }
 
-  public dumpData(): PentHouseRoomData {
+  public dumpData(): PenthouseRoomData {
     return {
       id: this.id,
       name: this.name,
@@ -166,7 +166,7 @@ export class PentHouseRoom extends Room {
   }
 }
 
-export type PentHouseRoomData = {
+export type PenthouseRoomData = {
   id: string;
   name: string;
   width: number;

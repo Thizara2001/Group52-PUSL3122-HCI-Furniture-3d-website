@@ -11,9 +11,9 @@ export class OfficeRoom extends Room {
   public readonly refresh: () => void;
 
   constructor() {
-    const name = "Cylindrical Office Room";
+    const name = "Office Room";
     const group = new THREE.Group();
-    super("cylindricalOfficeRoom", name, group as unknown as THREE.Mesh);
+    super("officeRoom", name, group as unknown as THREE.Mesh);
 
     // Materials
     const wallMaterial = new THREE.MeshStandardMaterial({

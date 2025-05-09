@@ -208,7 +208,7 @@ export class PartyRoom extends Room {
     return -this.height / 2;
   }
 
-  public static fromData(dump: TShapedRoomData): PartyRoom {
+  public static fromData(dump: PartyRoomData): PartyRoom {
     const room = new PartyRoom();
     room.mainWidth = dump.mainWidth;
     room.mainDepth = dump.mainDepth;
@@ -222,7 +222,7 @@ export class PartyRoom extends Room {
     return room;
   }
 
-  public dumpData(): TShapedRoomData {
+  public dumpData(): PartyRoomData {
     return {
       id: this.id,
       name: this.name,
@@ -238,7 +238,7 @@ export class PartyRoom extends Room {
   }
 }
 
-export type TShapedRoomData = {
+export type PartyRoomData = {
   id: string;
   name: string;
   mainWidth: number;

@@ -16,7 +16,7 @@ export class StudyRoom extends Room {
   public readonly refresh: () => void;
 
   constructor() {
-    const name = "L-Shaped Study Room";
+    const name = "Study Room";
 
     const group = new THREE.Group();
     group.name = name;

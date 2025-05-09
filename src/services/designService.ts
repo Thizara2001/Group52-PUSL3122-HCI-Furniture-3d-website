@@ -6,10 +6,10 @@ import { DesignCreate, DesignUpdate, DesignData } from "./api";
 import { OfficeRoom, OfficeRoomData } from "../models/rooms/officeRoom.ts";
 import { StudyRoom, StudyRoomData } from "../models/rooms/studyRoom.ts";
 import {
-  PentHouseRoom,
-  PentHouseRoomData,
-} from "../models/rooms/pentHouseRoom.ts";
-import { PartyRoom, TShapedRoomData } from "../models/rooms/partyRoom.ts";
+  PenthouseRoom,
+  PenthouseRoomData,
+} from "../models/rooms/penthouseRoom.ts";
+import { PartyRoom, PartyRoomData } from "../models/rooms/partyRoom.ts";
 import { Chair, ChairData } from "../models/furniture/chair.ts";
 import { Bookshelf, BookshelfData } from "../models/furniture/bookshelf.ts";
 import { Table, TableData } from "../models/furniture/table.ts";
@@ -90,11 +90,11 @@ export const createModelsFromDesign = (
     case "studyRoom":
       room = StudyRoom.fromData(designData.room.data as StudyRoomData);
       break;
-    case "pentHouseRoom":
-      room = PentHouseRoom.fromData(designData.room.data as PentHouseRoomData);
+    case "penthouseRoom":
+      room = PenthouseRoom.fromData(designData.room.data as PenthouseRoomData);
       break;
     case "partyRoom":
-      room = PartyRoom.fromData(designData.room.data as TShapedRoomData);
+      room = PartyRoom.fromData(designData.room.data as PartyRoomData);
       break;
     default:
       throw new Error(`Unknown room type: ${designData.room.type}`);
