@@ -8,8 +8,7 @@ export class Sofa extends Furniture {
   private height = 5;
   private readonly scale = 100;
   private color = 0x8b4513;
-  private readonly refreshDimensions: () => void;
-  private readonly refreshColor: () => void;
+  public readonly refresh: () => void;
 
   constructor() {
     const sofa = new THREE.Group();
@@ -37,7 +36,7 @@ export class Sofa extends Furniture {
     sofa.add(leftArm);
     sofa.add(rightArm);
 
-    this.refreshDimensions = () => {
+    this.refresh = () => {
       base.geometry.dispose();
       base.geometry = new THREE.BoxGeometry(this.width, 0.5, this.depth);
       base.position.set(0, 0, 0);
@@ -58,13 +57,9 @@ export class Sofa extends Furniture {
       rightArm.geometry = armGeometry;
       leftArm.position.set(this.width / 2 - 0.5 / 2, 0.5 / 2 + 3 / 2, 0);
       rightArm.position.set(-this.width / 2 + 0.5 / 2, 0.5 / 2 + 3 / 2, 0);
-    };
-    this.refreshDimensions();
-
-    this.refreshColor = () => {
       material.color.setHex(this.color);
     };
-    this.refreshColor();
+    this.refresh();
   }
 
   public getProperties(): Property[] {
@@ -76,7 +71,6 @@ export class Sofa extends Furniture {
         set: (value: unknown) => {
           if (typeof value === "number") {
             this.width = value / this.scale;
-            this.refreshDimensions();
           }
         },
       },
@@ -87,7 +81,6 @@ export class Sofa extends Furniture {
         set: (value: unknown) => {
           if (typeof value === "number") {
             this.depth = value / this.scale;
-            this.refreshDimensions();
           }
         },
       },
@@ -98,7 +91,6 @@ export class Sofa extends Furniture {
         set: (value: unknown) => {
           if (typeof value === "number") {
             this.height = value / this.scale;
-            this.refreshDimensions();
           }
         },
       },
@@ -112,7 +104,6 @@ export class Sofa extends Furniture {
             return;
           }
           this.color = parseInt(color.replace("#", "0x"), 16);
-          this.refreshColor();
         },
       },
     ];
