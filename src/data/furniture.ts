@@ -5,14 +5,23 @@ import { Table } from "../models/furniture/table.ts";
 import { Bookshelf } from "../models/furniture/bookshelf.ts";
 import { Lamp } from "../models/furniture/lamp.ts";
 import { Chair } from "../models/furniture/chair.ts";
+import { Rug } from "../models/furniture/rug.ts";
 
 const sofa = new Sofa();
 const table = new Table();
 const bookshelf = new Bookshelf();
 const lamp = new Lamp();
 const chair = new Chair();
+const rug = new Rug();
 
-export const furniture: Furniture[] = [sofa, table, bookshelf, lamp, chair];
+export const furniture: Furniture[] = [
+  sofa,
+  table,
+  bookshelf,
+  lamp,
+  chair,
+  rug,
+];
 
 export const createBackgroundFurniture = (): THREE.Mesh[] => {
   return furniture.map((item) => item.getModel().clone());
