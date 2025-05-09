@@ -6,6 +6,8 @@ import {
   getUserDesigns,
   deleteDesign,
   Design,
+  getCurrentUser,
+  User,
 } from "../services/api";
 
 const Designs: React.FC = () => {
@@ -14,6 +16,23 @@ const Designs: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"all" | "my">("all");
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  // Fetch current user data from /me endpoint
+  useEffect(() => {
+    getCurrentUser()
+      .then((userData) => {
+        if (userData) {
+          setCurrentUser(userData);
+        } else {
+          setCurrentUser(null);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+        setCurrentUser(null);
+      });
+  }, []);
 
   const fetchDesigns = useCallback(() => {
     setIsLoading(true);
@@ -81,37 +100,41 @@ const Designs: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Furniture Designs</h1>
-          <button
-            type={"button"}
-            onClick={handleCreateNewDesign}
-            className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded"
-          >
-            Create New Design
-          </button>
+          {currentUser && currentUser.role === "designer" && (
+            <button
+              type={"button"}
+              onClick={handleCreateNewDesign}
+              className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded"
+            >
+              Create New Design
+            </button>
+          )}
         </div>
 
-        <div className="mb-6">
-          <div className="flex space-x-2">
-            <button
-              type={"button"}
-              onClick={() => setViewMode("all")}
-              className={`px-4 py-2 rounded ${
-                viewMode === "all" ? "bg-blue-600 text-white" : "bg-gray-200"
-              }`}
-            >
-              All Designs
-            </button>
-            <button
-              type={"button"}
-              onClick={() => setViewMode("my")}
-              className={`px-4 py-2 rounded ${
-                viewMode === "my" ? "bg-blue-600 text-white" : "bg-gray-200"
-              }`}
-            >
-              My Designs
-            </button>
+        {currentUser && currentUser.role === "designer" && (
+          <div className="mb-6">
+            <div className="flex space-x-2">
+              <button
+                type={"button"}
+                onClick={() => setViewMode("all")}
+                className={`px-4 py-2 rounded ${
+                  viewMode === "all" ? "bg-blue-600 text-white" : "bg-gray-200"
+                }`}
+              >
+                All Designs
+              </button>
+              <button
+                type={"button"}
+                onClick={() => setViewMode("my")}
+                className={`px-4 py-2 rounded ${
+                  viewMode === "my" ? "bg-blue-600 text-white" : "bg-gray-200"
+                }`}
+              >
+                My Designs
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">

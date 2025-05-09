@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { login } from "../services/api";
+import { login, getCurrentUser } from "../services/api";
 import MainLayout from "../components/layout/MainLayout";
 
 const Login: React.FC = () => {
@@ -17,7 +17,14 @@ const Login: React.FC = () => {
 
     try {
       await login(username, password);
-      navigate("/designs"); // Redirect to designs page after login
+
+      // Fetch user data after successful login
+      const userData = await getCurrentUser();
+      if (userData) {
+        navigate("/designs");
+      } else {
+        navigate("/catalog"); // Fallback if user data can't be fetched
+      }
     } catch (err) {
       console.error("Login error:", err);
       setError("Invalid username or password. Please try again.");

@@ -7,7 +7,12 @@ import { rooms, getRoomById } from "../data/rooms";
 import { Room } from "../models/rooms/room.ts";
 import { Furniture } from "../models/furniture/furniture.ts";
 import { Property } from "../models/property.ts";
-import { createDesign, updateDesign } from "../services/api";
+import {
+  createDesign,
+  getCurrentUser,
+  updateDesign,
+  User,
+} from "../services/api";
 import {
   createDesignFromModels,
   createModelsFromDesign,
@@ -17,6 +22,7 @@ import {
 const Viewer: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   // Check if we're viewing an existing design
   const designId = location.state?.designId;
@@ -43,6 +49,22 @@ const Viewer: React.FC = () => {
   const [designTitle, setDesignTitle] = useState(designName || "Untitled");
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Fetch current user data from /me endpoint
+  useEffect(() => {
+    getCurrentUser()
+      .then((userData) => {
+        if (userData) {
+          setCurrentUser(userData);
+        } else {
+          setCurrentUser(null);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+        setCurrentUser(null);
+      });
+  }, []);
 
   useEffect(() => {
     if (selectedFurniture) {
@@ -91,38 +113,44 @@ const Viewer: React.FC = () => {
           <div className="flex items-center">
             <h1 className="text-3xl font-bold mr-4">
               {isNewDesign || designId ? (
-                <input
-                  type="text"
-                  value={designTitle}
-                  onChange={(e) => setDesignTitle(e.target.value)}
-                  className="border-b border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent"
-                  placeholder="Design Title"
-                />
+                currentUser && currentUser.role === "designer" ? (
+                  <input
+                    type="text"
+                    value={designTitle}
+                    onChange={(e) => setDesignTitle(e.target.value)}
+                    className="border-b border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent"
+                    placeholder="Design Title"
+                  />
+                ) : (
+                  `Viewing '${designTitle}'`
+                )
               ) : selectedFurniture ? (
-                `Viewing ${selectedFurniture.getName()}`
+                `Viewing ${selectedFurniture.getName()} in ${selectedRoom.getName()}`
               ) : (
-                "3D Furniture Viewer"
+                `Viewing ${selectedRoom.getName()}`
               )}
             </h1>
 
-            {(isNewDesign || designId) && (
-              <button
-                type={"button"}
-                onClick={handleSaveDesign}
-                disabled={isSaving}
-                className={`ml-4 px-4 py-2 rounded ${
-                  isSaving
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-700 text-white"
-                }`}
-              >
-                {isSaving
-                  ? "Saving..."
-                  : designId
-                    ? "Update Design"
-                    : "Save Design"}
-              </button>
-            )}
+            {(isNewDesign || designId) &&
+              currentUser &&
+              currentUser.role === "designer" && (
+                <button
+                  type={"button"}
+                  onClick={handleSaveDesign}
+                  disabled={isSaving}
+                  className={`ml-4 px-4 py-2 rounded ${
+                    isSaving
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-green-600 hover:bg-green-700 text-white"
+                  }`}
+                >
+                  {isSaving
+                    ? "Saving..."
+                    : designId
+                      ? "Update Design"
+                      : "Save Design"}
+                </button>
+              )}
           </div>
 
           <div className="flex gap-2">

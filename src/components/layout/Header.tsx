@@ -1,30 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.svg";
-import { logout } from "../../services/api";
+import { logout, getCurrentUser, User } from "../../services/api";
 
 const Header: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
 
-  // Check if user is logged in by trying to access a protected endpoint
+  // Fetch current user data from /me endpoint
   useEffect(() => {
-    fetch(
-      `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/getUserDesigns`,
-      {
-        credentials: "include",
-      },
-    )
-      .then((res) => {
-        if (res.ok) {
-          setIsLoggedIn(true);
+    getCurrentUser()
+      .then((userData) => {
+        if (userData) {
+          setCurrentUser(userData);
         } else {
-          setIsLoggedIn(false);
+          setCurrentUser(null);
         }
       })
-      .catch(() => {
-        setIsLoggedIn(false);
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+        setCurrentUser(null);
       });
   }, []);
 
@@ -34,7 +30,7 @@ const Header: React.FC = () => {
     setIsLoggingOut(true);
     try {
       await logout();
-      setIsLoggedIn(false);
+      setCurrentUser(null);
       navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -57,11 +53,11 @@ const Header: React.FC = () => {
               Catalog
             </Link>
           </li>
-          {isLoggedIn ? (
+          {currentUser ? (
             <>
               <li>
                 <Link to="/designs" className="hover:text-blue-300">
-                  My Designs
+                  Designs
                 </Link>
               </li>
               <li>

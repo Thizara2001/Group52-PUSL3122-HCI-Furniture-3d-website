@@ -77,6 +77,17 @@ export const logout = async (): Promise<void> => {
   await api.post("/logout");
 };
 
+// Get current user information
+export const getCurrentUser = async (): Promise<User | null> => {
+  try {
+    const response = await api.get<User>("/me");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to get current user:", error);
+    return null;
+  }
+};
+
 // Design endpoints
 export const getAllDesigns = async (): Promise<Design[]> => {
   const response = await api.get<Design[]>("/getAllDesigns");
