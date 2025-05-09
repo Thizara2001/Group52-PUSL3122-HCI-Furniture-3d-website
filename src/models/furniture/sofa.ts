@@ -126,9 +126,9 @@ export class Sofa extends Furniture {
       id: this.id,
       name: this.name,
       position: this.model.position.toArray(),
-      width: this.width,
-      depth: this.depth,
-      height: this.height,
+      width: this.width * this.scale,
+      depth: this.depth * this.scale,
+      height: this.height * this.scale,
       color: this.color,
     };
   }
