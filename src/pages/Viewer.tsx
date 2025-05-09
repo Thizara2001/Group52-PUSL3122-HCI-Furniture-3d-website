@@ -1,26 +1,52 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
 import ThreeScene from "../ThreeScene";
 import { getFurnitureById } from "../data/furniture";
 import { rooms, getRoomById } from "../data/rooms";
 import { Room } from "../models/rooms/room.ts";
+import { Furniture } from "../models/furniture/furniture.ts";
 import { Property } from "../models/property.ts";
+import { createDesign, updateDesign } from "../services/api";
+import {
+  createDesignFromModels,
+  createModelsFromDesign,
+  updateDesignFromModels,
+} from "../services/designService";
 
 const Viewer: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Check if we're viewing an existing design
+  const designId = location.state?.designId;
+  const designName = location.state?.designName;
+  const designData = location.state?.designData;
+  // Convert the design data to models
+  const { room, furniture } = designData
+    ? createModelsFromDesign(designData)
+    : {};
+  const isNewDesign = location.state?.isNewDesign;
+
+  // For direct furniture viewing (legacy support)
   const itemId: string | null = location.state?.id;
+
   const [view, setView] = useState<"2d" | "3d">("3d");
-  const [furniture] = useState(itemId ? getFurnitureById(itemId) : undefined);
-  const [selectedRoom, setSelectedRoom] = useState<Room>(rooms[0]);
+  const [selectedFurniture] = useState<Furniture | undefined>(
+    furniture || (itemId ? getFurnitureById(itemId) : undefined),
+  );
+  const [selectedRoom, setSelectedRoom] = useState<Room>(room || rooms[0]);
   const [properties, setProperties] = useState<Property[]>([]);
   const [roomProperties, setRoomProperties] = useState<Property[]>([]);
+  const [designTitle, setDesignTitle] = useState(designName || "Untitled");
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (furniture) {
-      setProperties(furniture.getProperties());
+    if (selectedFurniture) {
+      setProperties(selectedFurniture.getProperties());
     }
-  }, [furniture]);
+  }, [selectedFurniture]);
 
   useEffect(() => {
     if (selectedRoom) {
@@ -28,15 +54,75 @@ const Viewer: React.FC = () => {
     }
   }, [selectedRoom]);
 
+  const handleSaveDesign = async () => {
+    setSaveError(null);
+    setIsSaving(true);
+
+    try {
+      if (designId) {
+        // Update existing design
+        await updateDesign(designId, {
+          name: designTitle,
+          ...updateDesignFromModels(selectedRoom, selectedFurniture),
+        });
+      } else {
+        // Create new design
+        await createDesign(
+          createDesignFromModels(designTitle, selectedRoom, selectedFurniture),
+        );
+      }
+
+      // Navigate back to designs page
+      navigate("/designs");
+    } catch (err) {
+      console.error("Error saving design:", err);
+      setSaveError("Failed to save design. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <MainLayout>
       <div className="w-full h-full flex flex-col p-4">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold">
-            {furniture
-              ? `Viewing ${furniture.getName()}`
-              : "3D Furniture Viewer"}
-          </h1>
+          <div className="flex items-center">
+            <h1 className="text-3xl font-bold mr-4">
+              {isNewDesign || designId ? (
+                <input
+                  type="text"
+                  value={designTitle}
+                  onChange={(e) => setDesignTitle(e.target.value)}
+                  className="border-b border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent"
+                  placeholder="Design Title"
+                />
+              ) : selectedFurniture ? (
+                `Viewing ${selectedFurniture.getName()}`
+              ) : (
+                "3D Furniture Viewer"
+              )}
+            </h1>
+
+            {(isNewDesign || designId) && (
+              <button
+                type={"button"}
+                onClick={handleSaveDesign}
+                disabled={isSaving}
+                className={`ml-4 px-4 py-2 rounded ${
+                  isSaving
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700 text-white"
+                }`}
+              >
+                {isSaving
+                  ? "Saving..."
+                  : designId
+                    ? "Update Design"
+                    : "Save Design"}
+              </button>
+            )}
+          </div>
+
           <div className="flex gap-2">
             <button
               type="button"
@@ -59,9 +145,19 @@ const Viewer: React.FC = () => {
           </div>
         </div>
 
+        {saveError && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {saveError}
+          </div>
+        )}
+
         <div className="flex-1 flex overflow-hidden">
           <div className="flex-1 bg-gray-100 rounded-lg overflow-hidden">
-            <ThreeScene view={view} furniture={furniture} room={selectedRoom} />
+            <ThreeScene
+              view={view}
+              furniture={selectedFurniture}
+              room={selectedRoom}
+            />
           </div>
 
           <div className="w-64 ml-4 p-4 bg-white rounded-lg shadow overflow-auto">
@@ -100,10 +196,10 @@ const Viewer: React.FC = () => {
               ))}
             </div>
 
-            {furniture && (
+            {selectedFurniture && (
               <div>
                 <h2 className="text-xl font-semibold mb-4">
-                  {furniture.getName()}
+                  {selectedFurniture.getName()}
                 </h2>
 
                 {properties.map((prop) => (
