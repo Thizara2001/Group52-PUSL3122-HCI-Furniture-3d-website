@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
 import ThreeScene from "../ThreeScene";
-import { getFurnitureById } from "../data/furniture";
+import { getFurnitureById, furniture } from "../data/furniture";
 import { rooms, getRoomById } from "../data/rooms";
 import { Room } from "../models/rooms/room.ts";
 import { Furniture } from "../models/furniture/furniture.ts";
@@ -23,7 +23,7 @@ const Viewer: React.FC = () => {
   const designName = location.state?.designName;
   const designData = location.state?.designData;
   // Convert the design data to models
-  const { room, furniture } = designData
+  const { room: designRoom, furniture: designFurniture } = designData
     ? createModelsFromDesign(designData)
     : {};
   const isNewDesign = location.state?.isNewDesign;
@@ -32,10 +32,12 @@ const Viewer: React.FC = () => {
   const itemId: string | null = location.state?.id;
 
   const [view, setView] = useState<"2d" | "3d">("3d");
-  const [selectedFurniture] = useState<Furniture | undefined>(
-    furniture || (itemId ? getFurnitureById(itemId) : undefined),
+  const [selectedFurniture, setSelectedFurniture] = useState<
+    Furniture | undefined
+  >(designFurniture || (itemId ? getFurnitureById(itemId) : undefined));
+  const [selectedRoom, setSelectedRoom] = useState<Room>(
+    designRoom || rooms[0],
   );
-  const [selectedRoom, setSelectedRoom] = useState<Room>(room || rooms[0]);
   const [properties, setProperties] = useState<Property[]>([]);
   const [roomProperties, setRoomProperties] = useState<Property[]>([]);
   const [designTitle, setDesignTitle] = useState(designName || "Untitled");
@@ -194,6 +196,35 @@ const Viewer: React.FC = () => {
                   }}
                 />
               ))}
+            </div>
+
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-4">Furniture</h2>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Select Furniture
+                </label>
+                <select
+                  value={selectedFurniture?.getId() || "none"}
+                  onChange={(e) => {
+                    if (e.target.value === "none") {
+                      setSelectedFurniture(undefined);
+                    } else {
+                      const furniture = getFurnitureById(e.target.value);
+                      if (furniture) setSelectedFurniture(furniture);
+                    }
+                  }}
+                  className="w-full p-2 rounded border border-gray-300"
+                >
+                  <option value="none">No Furniture</option>
+                  {furniture.map((item) => (
+                    <option key={item.getId()} value={item.getId()}>
+                      {item.getName()}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {selectedFurniture && (
