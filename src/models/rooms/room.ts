@@ -29,4 +29,6 @@ export abstract class Room {
   public abstract getFloorY(): number;
 
   public abstract refresh(): void;
+
+  public abstract dumpData(): object;
 }

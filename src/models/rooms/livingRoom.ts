@@ -141,4 +141,40 @@ export class LivingRoom extends Room {
   public getFloorY(): number {
     return -this.height / 2;
   }
+
+  public static fromData(dump: LivingRoomData): LivingRoom {
+    const livingRoom = new LivingRoom();
+    livingRoom.width = dump.width;
+    livingRoom.height = dump.height;
+    livingRoom.depth = dump.depth;
+    livingRoom.wallsColor = dump.wallsColor;
+    livingRoom.floorColor = dump.floorColor;
+    livingRoom.ceilingColor = dump.ceilingColor;
+    livingRoom.refresh();
+    return livingRoom;
+  }
+
+  public dumpData(): LivingRoomData {
+    return {
+      id: this.id,
+      name: this.name,
+      width: this.width,
+      height: this.height,
+      depth: this.depth,
+      wallsColor: this.wallsColor,
+      floorColor: this.floorColor,
+      ceilingColor: this.ceilingColor,
+    };
+  }
 }
+
+export type LivingRoomData = {
+  id: string;
+  name: string;
+  width: number;
+  height: number;
+  depth: number;
+  wallsColor: number;
+  floorColor: number;
+  ceilingColor: number;
+};
