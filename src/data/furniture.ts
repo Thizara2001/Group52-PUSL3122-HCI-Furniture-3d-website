@@ -1,10 +1,12 @@
 import { Sofa } from "../models/furniture/sofa.ts";
 import { Furniture } from "../models/furniture/furniture.ts";
 import * as THREE from "three";
+import { Table } from "../models/furniture/table.ts";
 
 const sofa = new Sofa();
+const table = new Table();
 
-export const furniture: Furniture[] = [sofa];
+export const furniture: Furniture[] = [sofa, table];
 
 export const createBackgroundFurniture = (): THREE.Mesh[] => {
   return furniture.map((item) => item.getModel().clone());
