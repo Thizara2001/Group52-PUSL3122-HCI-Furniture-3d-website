@@ -94,7 +94,8 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ view, furniture, room }) => {
   useEffect(() => {
     const animate = () => {
       requestAnimationFrame(animate);
-      furniture?.refresh();
+      const floorY = room.getFloorY();
+      furniture?.refresh(floorY);
       room.refresh();
       renderer.render(scene, camera);
     };

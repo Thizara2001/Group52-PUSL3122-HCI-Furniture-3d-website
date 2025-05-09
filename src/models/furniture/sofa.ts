@@ -8,7 +8,7 @@ export class Sofa extends Furniture {
   private height = 5;
   private readonly scale = 100;
   private color = 0x8b4513;
-  public readonly refresh: () => void;
+  public readonly refresh: (floorY: number) => void;
 
   constructor() {
     const sofa = new THREE.Group();
@@ -36,7 +36,7 @@ export class Sofa extends Furniture {
     sofa.add(leftArm);
     sofa.add(rightArm);
 
-    this.refresh = () => {
+    this.refresh = (floorY) => {
       base.geometry.dispose();
       base.geometry = new THREE.BoxGeometry(this.width, 0.5, this.depth);
       base.position.set(0, 0, 0);
@@ -58,8 +58,9 @@ export class Sofa extends Furniture {
       leftArm.position.set(this.width / 2 - 0.5 / 2, 0.5 / 2 + 3 / 2, 0);
       rightArm.position.set(-this.width / 2 + 0.5 / 2, 0.5 / 2 + 3 / 2, 0);
       material.color.setHex(this.color);
+      sofa.position.setY(floorY + 0.5 / 2);
     };
-    this.refresh();
+    this.refresh(0);
   }
 
   public getProperties(): Property[] {

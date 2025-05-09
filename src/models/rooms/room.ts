@@ -26,5 +26,7 @@ export abstract class Room {
 
   public abstract getProperties(): Property[];
 
+  public abstract getFloorY(): number;
+
   public abstract refresh(): void;
 }

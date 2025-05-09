@@ -137,4 +137,8 @@ export class LivingRoom extends Room {
       },
     ];
   }
+
+  public getFloorY(): number {
+    return -this.height / 2;
+  }
 }
