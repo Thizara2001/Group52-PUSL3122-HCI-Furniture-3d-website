@@ -10,6 +10,7 @@ export const setupControls = (
   room: Mesh,
 ) => {
   const dragControls = new DragControls(furnitureItems, camera, domElement);
+  dragControls.transformGroup = true;
 
   const dragListener: THREE.EventListener<
     { object: THREE.Object3D },
@@ -21,19 +22,11 @@ export const setupControls = (
     // Compute bounding box of the dragged object
     const draggedBox = new THREE.Box3().setFromObject(draggedObject);
 
-    // Check for collisions with other furniture
-    for (const item of furnitureItems) {
-      if (item === draggedObject) continue;
-      const itemBox = new THREE.Box3().setFromObject(item);
-      if (draggedBox.intersectsBox(itemBox)) {
-        // Simple collision response: revert position
-        draggedObject.position.copy(draggedObject.userData.previousPosition);
-        return;
-      }
-    }
-
     // Check for collisions with room boundaries
     const roomBox = new THREE.Box3().setFromObject(room);
+    // Ignore Y-axis for room boundaries
+    roomBox.min.setY(-Infinity);
+    roomBox.max.setY(Infinity);
     if (!roomBox.containsBox(draggedBox)) {
       // Revert position if outside room
       draggedObject.position.copy(draggedObject.userData.previousPosition);
